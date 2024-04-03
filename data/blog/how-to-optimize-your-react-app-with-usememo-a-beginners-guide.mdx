@@ -1,0 +1,136 @@
+---
+title: What is useMemo and how to Optimize Your React App with useMemo?
+date: '2023-03-16'
+tags: ['react']
+draft: false
+summary: What is useMemo? Learn how useMemo can help you speed up your app by optimizing how it processes and displays data.
+---
+
+Have you ever noticed that sometimes your React app can get slow, especially when it has a lot of data to process or display? That’s where useMemo comes in! It’s a React hook that can help you speed up your app by optimizing how it processes and displays data.
+
+## The Basic
+
+So, what is `useMemo` exactly? Well, think of it as a tool that helps you remember things that are expensive to compute. For example, let’s say you have a long list of items that you want to display on a page, but you only want to show the ones that meet a certain condition. Normally, your app would have to check each item in the list to see if it meets the condition, and that could take a while if the list is long. But with useMemo, your app can remember which items meet the condition, so it doesn’t have to check them again every time the page is updated.
+
+Here’s how you can use `useMemo` in your React app:
+
+- First, you need to import the useMemo hook at the top of your file:
+
+```js
+import { useMemo } from 'react'
+```
+
+- Next, let’s create an example array of data that we want to optimize:
+
+```js
+const data = [1, 2, 3, 4, 5]
+```
+
+- Now let’s say we want to calculate the sum of all the numbers in the array. Normally, we would do this like so:
+
+```js
+const sum = useMemo(() => {
+  console.log('Calculating sum...')
+  return data.reduce((a, b) => a + b)
+}, [data])
+```
+
+Here, the first argument to `useMemo` is a function that calculates the sum, and the second argument is an array of dependencies. Whenever one of the dependencies changes, useMemo will re-run the function to recalculate the sum. In this case, the dependency is the data array, because if the array changes, we need to recalculate the sum.
+
+- Finally, we can display the sum in our app like so:
+
+```js
+return (
+  <div>
+    <p>The sum is: {sum}</p>
+  </div>
+)
+```
+
+And that’s it! Now your app will only recalculate the sum when the data array changes, so it should be faster and more efficient.
+
+To summarize, `useMemo` is a React hook that can help you optimize your app by remembering expensive computations. By using useMemo, you can speed up your app and make it more efficient, especially when dealing with large amounts of data.
+
+## Let’s optimize further
+
+Now that we grasped the basic concept, here’s another example that demonstrates how to use useMemo to optimize a real-life problem:
+
+### The Problem
+
+Let’s say you have a list of users in your React app, and you want to display a filtered list of users based on a search term entered by the user. Pretty easy, right?
+
+- First, let’s create a component that displays the list of users:
+
+```js
+function UserList({ users }) {
+  return (
+    <div>
+      {users.map((user) => (
+        <p key={user.id}>{user.name}</p>
+      ))}
+    </div>
+  )
+}
+```
+
+- Next, let’s create a component that filters the list of users based on a search term:
+
+```js
+function FilteredUserList({ users, searchTerm }) {
+  const filteredUsers = users.filter((user) => user.name.includes(searchTerm))
+
+  return <UserList users={filteredUsers} />
+}
+```
+
+- Here, we’re using the filter method to create a new array of users that match the search term, and then pass that array to the UserList component.
+- Now, let’s say the users prop in the FilteredUserList component is a very large array. If the user enters a new search term, the app would need to filter through the entire array again, which could be slow and inefficient.
+
+### The Solution
+
+- Instead, we can use useMemo to remember the filtered array:
+
+```js
+function FilteredUserList({ users, searchTerm }) {
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => user.name.includes(searchTerm))
+  }, [users, searchTerm])
+
+  return <UserList users={filteredUsers} />
+}
+```
+
+Here, we’re using `useMemo` to remember the filtered array based on the users and searchTerm dependencies. Whenever either of these dependencies changes, useMemo will recalculate the filtered array.
+
+- Finally, we can render the FilteredUserList component in our app, and pass in the users and searchTerm props:
+
+```js
+function App() {
+  const users = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' },
+    { id: 3, name: 'Charlie' },
+    { id: 4, name: 'David' },
+    { id: 5, name: 'Eve' },
+  ]
+
+  const [searchTerm, setSearchTerm] = useState('')
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={(event) => setSearchTerm(event.target.value)}
+      />
+      <FilteredUserList users={users} searchTerm={searchTerm} />
+    </div>
+  )
+}
+```
+
+Here, we’re using the `useState` hook to manage the `searchTerm` state, and passing it down as a prop to the `FilteredUserList` component.
+
+And that’s it! Now your app will only filter the list of users when the users or searchTerm props change, so it should be faster and more efficient.
+
+I hope this example helps illustrate how you can use useMemo to optimize your app when dealing with large amounts of data.
